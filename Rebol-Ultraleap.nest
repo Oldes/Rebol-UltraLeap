@@ -1,0 +1,155 @@
+;-    .-.                                                                       
+;-   /'v'\   SISKIN-Builder project file                                        
+;-  (/uOu\)  https://github.com/Siskin-framework/Builder/                       
+;-===="="=======================================================================
+
+;github: Oldes/ultraleap
+
+version: 0.0.1
+
+;include:  %ultraleap/
+
+compiler: clang
+arch:     x64
+optimize: 2
+
+define: USE_TRACES
+
+;- options common for all Rebol extensions ----------------------
+;flag:   shared
+
+#if Windows? [
+	define: _CRT_SECURE_NO_WARNINGS
+	define: _USE_MATH_DEFINES
+	define: TO_WINDOWS
+	upx:    on
+	strip:  on
+]
+#if Linux? [
+	compiler: gcc
+]
+
+target-x86: [
+	arch: x86
+]
+target-x64: [
+	arch: x64
+	defines: [
+		_FILE_OFFSET_BITS=64
+		__LP64__       ; has long (integer) 64 bits
+	]
+	#if macOS?   [ flag: "-arch x86_64" ]
+]
+target-arm64: [
+	arch: arm64
+	#if Linux? [
+		flag: "-arch arm64"
+	]
+	#if macOS? [
+		flag: "-target arm64-apple-darwin"
+	]
+	define: _FILE_OFFSET_BITS=64
+	define: __LP64__   ; has long (integer) 64 bits
+	define: __arm64__
+]
+target-armv7: [
+	arch: armv7
+	flag: "-march=armv7"
+]
+;----------------------------------------------------------------
+
+
+#if Posix? [
+;	libraries: [%dl %m %pthread]
+;	cflag: -msse2
+;	cflag: -mavx2
+]
+
+#if macOS? [
+	sign: on
+;	entitlements: %ultraleap/Entitlements.plist
+;	define: DISABLE_MANUAL_TARGET_ORDER_BUILD_WARNING
+;	define: MA_NO_RUNTIME_LINKING
+;	define: MA_ENABLE_ONLY_SPECIFIC_BACKENDS
+;	define: MA_ENABLE_COREAUDIO
+;	frameworks: [CoreFoundation CoreAudio AudioToolbox]
+]
+#if Linux? [
+	cflags: -fPIC
+]
+
+;- generate main extension header --------------------------------
+do %src/ultraleap-rebol-extension.r3
+
+extension: [
+	file: %src/LeapConnection.c
+	flag: shared
+]
+
+
+files: [
+	%src/ultraleap-commands.c
+	%src/ultraleap-commands-table.c
+	%src/ultraleap-rebol-extension.c
+]
+
+include: %include/
+library: %lib/x64/LeapC
+
+eggs: [
+	#if Windows? [
+		"Rebol Ultraleap extension: win32_x86" [
+			name: %ultraleap-windows-x86.rebx
+			:target-x86
+		]
+		"Rebol Ultraleap extension: win32_x64" [
+			name: %ultraleap-windows-x64.rebx
+			:extension
+			:target-x64
+		]
+		"Test" [
+			name: %test
+			file: only [
+				;%test.c ;leapc_main.c
+				%samples/ExampleConnection.c
+				;%samples/CallbackSample.c
+				%samples/InterpolationSample.c
+			]
+			include: %samples/
+			:target-x64
+		]
+		"Multidevice sample" [
+			name: %test-multidevice
+			file: only [
+				%samples/MultiDeviceSample.c
+			]
+			include: %samples/
+			:target-x64
+		]
+	]
+	#if macOS? [
+		"Rebol Ultraleap extension: macos_x64" [
+			name: %ultraleap-macos-x64
+			:target-x64
+		]
+		"Rebol Ultraleap extension: macos_arm64" [
+			name: %ultraleap-macos-arm64
+			:target-arm64
+		]
+	]
+	#if Linux? [
+		"Rebol Ultraleap extension:linux_x64" [
+			name: %ultraleap-linux-x64
+			:target-x64
+		]
+		"Rebol Ultraleap extension: linux_arm64" [
+			name: %ultraleap-linux-arm64
+			:target-arm64
+		]
+		"Rebol Ultraleap extension: linux_armv7" [
+			name: %ultraleap-linux-armv7
+			:target-armv7
+		]
+	]
+]
+
