@@ -24,10 +24,10 @@ register LEAP_QUATERNION! make struct! [
 ]
 ;; Describes a bone's position and orientation.
 register LEAP_BONE! make struct! [
-	prev     [struct! LEAP_VECTOR!] "The base of the bone closer to the heart."
-	next     [struct! LEAP_VECTOR!] "The end of the bone further from the heart."
-	width    [float32!] "The average width of the flesh around the bone in millimeters."
-	rotation [struct! LEAP_QUATERNION!] "Rotation in world space from the forward direction."
+	prev     [struct! LEAP_VECTOR!]     ;; The base of the bone closer to the heart.
+	next     [struct! LEAP_VECTOR!]     ;; The end of the bone further from the heart.
+	width    [float32!]                 ;; The average width of the flesh around the bone in millimeters.
+	rotation [struct! LEAP_QUATERNION!] ;; Rotation in world space from the forward direction.
 ]
 ;; Describes the digit of a hand.
 register LEAP_DIGIT! make struct! [
