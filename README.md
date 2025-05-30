@@ -1,4 +1,6 @@
 ![rebol-ultraleap](https://github.com/user-attachments/assets/2be73e03-ab9f-499e-877c-40026c3c162c)
+[![Gitter](https://badges.gitter.im/rebol3/community.svg)](https://gitter.im/rebol3/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Zulip](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://rebol.zulipchat.com/)
 
 # Rebol/Ultraleap
 
